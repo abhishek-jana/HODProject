@@ -1,6 +1,25 @@
 import numpy as np
 from scipy.special import erfc
- 
+
+filename = "mnt/data1/MDhalos.npy"
+
+def load(fin):
+    """
+    file has 6 columns: Mass of Halo, Radius1 (scale radius), Radius 2 (virial radius), x, y, z
+    
+    Output:
+    a dictionary containing mass,r1,r2,x,y,z
+    """
+    fout = {}
+    _file = np.load(str(fin))
+    fout["mass"] = _file[:,0]
+    fout["r1"] = _file[:,1]
+    fout["r2"] = _file[:,2]
+    fout["x"] = _file[:,3]
+    fout["y"] = _file[:,4]
+    fout["z"] = _file[:,5]
+    
+    return out
  
  
 class Occupy:
