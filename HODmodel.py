@@ -19,17 +19,35 @@ def load(fin):
     fout["y"] = _file[:,4]
     fout["z"] = _file[:,5]
     
-    return out
+    return fout
  
  
 class Occupy:
-    def __init__(self,M,HODpar):
-        self.M = M
+    def __init__(self,HODpar,fin):
+        self._fin = load(fin)
+        self.M = 
         self.M_cut = HODpar["M_cut"]
         self.sigma = HODpar["sigma"]
         self.kappa = HODpar["kappa"]
         self.M1 = HODpar["M1"]
         self.alpha = HODpar["alpha"]
+    
+    def load(fin):
+    """
+    file has 6 columns: Mass of Halo, Radius1 (scale radius), Radius 2 (virial radius), x, y, z
+    
+    Output:
+    a dictionary containing mass,r1,r2,x,y,z
+    """
+        fout = {}
+        _file = np.load(str(fin))
+        fout["mass"] = _file[:,0]
+        fout["r1"] = _file[:,1]
+        fout["r2"] = _file[:,2]
+        fout["x"] = _file[:,3]
+        fout["y"] = _file[:,4]
+        fout["z"] = _file[:,5]
+    return fout
          
     def central(self):
         _Ncen = 0.5*erfc(np.log(10**self.M_cut/self.M)/(np.sqrt(2)*self.sigma))
@@ -38,11 +56,18 @@ class Occupy:
     def satellite(self):
         _Nsat = Occupy.central(self)*((self.M - self.kappa*(10**self.M_cut))/10**self.M1)**self.alpha
         return np.random.poisson(_Nsat)
+
+class Coordinates(Occupy):
+    def __init__(self,M,HODpar,filename):
+        self.mass = fout[]
+        
+        super().__init__(M,HODpar)
          
 par = {"M_cut": 13., "sigma": 0.98, "kappa": 1.13 , "M1": 14., "alpha" : .9}
 
 def main():
-    occupy = Occupy(1e15,par)
+    np.random.seed(42)
+    occupy = Occupy(np.array([1e14,2e13,2.5e15]),par)
     print (occupy.central())
     print (occupy.satellite())
     
