@@ -74,9 +74,9 @@ def main():
     #print (occupy.cen_coord())
     #print (occupy.satellite())
     sp = sphere(10000)
-    plt.plot(sp.new_position()[1],sp.new_position()[2],'.')
+    plt.plot(sp.new_position()[0],sp.new_position()[2],'o')
     plt.savefig('sphere.png')
-
+    print (sp.new_position()[0])
 
 
 if __name__ == "__main__":
