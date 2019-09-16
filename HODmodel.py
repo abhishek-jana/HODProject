@@ -52,14 +52,32 @@ class Coordinates(Occupy):
         return _cen
     def sat_coord(self):
         pass
+class sphere:
+    def __init__(self,number_of_particles):
+        self.number_of_particles = number_of_particles
+    def new_position(self):
+        radius = np.random.uniform(0.0,1.0, (self.number_of_particles,1))
+        theta = np.random.uniform(0.,1.,(self.number_of_particles,1))*np.pi
+        phi = np.arccos(1-2*np.random.uniform(0.0,1.,(self.number_of_particles,1)))
+        x = radius * np.sin( theta ) * np.cos( phi )
+        y = radius * np.sin( theta ) * np.sin( phi )
+        z = radius * np.cos( theta )
+        return (x,y,z)
          
 par = {"M_cut": 13., "sigma": 0.98, "kappa": 1.13 , "M1": 14., "alpha" : .9}
-
+import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('Agg')
 def main():
     np.random.seed(42)
-    occupy = Coordinates(par,filename)
-    print (occupy.cen_coord())
+    #occupy = Coordinates(par,filename)
+    #print (occupy.cen_coord())
     #print (occupy.satellite())
-    
+    sp = sphere(10)
+    plt.plot(sp.new_position()[1],sp.new_position()[2])
+    plt.savefig('sphere.png')
+
+
+
 if __name__ == "__main__":
     main()    
