@@ -2,52 +2,32 @@ import numpy as np
 from scipy.special import erfc
 
 filename = "/mnt/data1/MDhalos.npy"
-
-def load(fin):
-    """
-    file has 6 columns: Mass of Halo, Radius1 (scale radius), Radius 2 (virial radius), x, y, z
-    
-    Output:
-    a dictionary containing mass,r1,r2,x,y,z
-    """
-    fout = {}
-    _file = np.load(fin)
-    fout["mass"] = _file[:,0]
-    fout["r1"] = _file[:,1]
-    fout["r2"] = _file[:,2]
-    fout["x"] = _file[:,3]
-    fout["y"] = _file[:,4]
-    fout["z"] = _file[:,5]
-    
-    return fout
- 
  
 class Occupy:
     def __init__(self,HODpar,fin):
-        self._fin = load(fin)
-        self.M = 
+        self.fout = {}
+        self.load(fin)
+        self.M = self.fout["mass"][:1000]
         self.M_cut = HODpar["M_cut"]
         self.sigma = HODpar["sigma"]
         self.kappa = HODpar["kappa"]
         self.M1 = HODpar["M1"]
         self.alpha = HODpar["alpha"]
     
-    def load(fin):
-    """
+    def load(self,fin):
+        """
     file has 6 columns: Mass of Halo, Radius1 (scale radius), Radius 2 (virial radius), x, y, z
     
     Output:
     a dictionary containing mass,r1,r2,x,y,z
-    """
-        fout = {}
-        _file = np.load(str(fin))
-        fout["mass"] = _file[:,0]
-        fout["r1"] = _file[:,1]
-        fout["r2"] = _file[:,2]
-        fout["x"] = _file[:,3]
-        fout["y"] = _file[:,4]
-        fout["z"] = _file[:,5]
-    return fout
+        """
+        __file = np.load(fin)
+        self.fout["mass"] = __file[:,0]
+        self.fout["r1"] = __file[:,1]
+        self.fout["r2"] = __file[:,2]
+        self.fout["x"] = __file[:,3]
+        self.fout["y"] = __file[:,4]
+        self.fout["z"] = __file[:,5]
          
     def central(self):
         _Ncen = 0.5*erfc(np.log(10**self.M_cut/self.M)/(np.sqrt(2)*self.sigma))
@@ -58,20 +38,28 @@ class Occupy:
         return np.random.poisson(_Nsat)
 
 class Coordinates(Occupy):
-    def __init__(self,M,HODpar,filename):
-        self.mass = fout[]
-        
-        super().__init__(M,HODpar)
+    def __init__(self,HODpar,fin):
+        super().__init__(HODpar,fin)
+
+    def cen_coord(self):
+        _cen = Occupy.central(self)
+        __nonzero = _cen.nonzero()
+        x = np.take(self.fout["x"], __nonzero)
+        y = np.take(self.fout["y"], __nonzero)
+        z = np.take(self.fout["z"], __nonzero)
+        _cen = np.vstack([x,y,z]).T
+        x,y,z = [None,None,None]
+        return _cen
+    def sat_coord(self):
+        pass
          
 par = {"M_cut": 13., "sigma": 0.98, "kappa": 1.13 , "M1": 14., "alpha" : .9}
 
 def main():
     np.random.seed(42)
-    occupy = Occupy(np.array([1e14,2e13,2.5e15]),par)
-    print (occupy.central())
-    print (occupy.satellite())
-    fout = (load(filename))
-    print (fout.keys())
+    occupy = Coordinates(par,filename)
+    print (occupy.cen_coord())
+    #print (occupy.satellite())
     
 if __name__ == "__main__":
     main()    
