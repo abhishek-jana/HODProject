@@ -73,8 +73,8 @@ def main():
     #occupy = Coordinates(par,filename)
     #print (occupy.cen_coord())
     #print (occupy.satellite())
-    sp = sphere(10)
-    plt.plot(sp.new_position()[1],sp.new_position()[2])
+    sp = sphere(10000)
+    plt.plot(sp.new_position()[1],sp.new_position()[2],'.')
     plt.savefig('sphere.png')
 
 
