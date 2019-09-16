@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.special import erfc
 
-filename = "mnt/data1/MDhalos.npy"
+filename = "/mnt/data1/MDhalos.npy"
 
 def load(fin):
     """
@@ -11,7 +11,7 @@ def load(fin):
     a dictionary containing mass,r1,r2,x,y,z
     """
     fout = {}
-    _file = np.load(str(fin))
+    _file = np.load(fin)
     fout["mass"] = _file[:,0]
     fout["r1"] = _file[:,1]
     fout["r2"] = _file[:,2]
@@ -19,7 +19,7 @@ def load(fin):
     fout["y"] = _file[:,4]
     fout["z"] = _file[:,5]
     
-    return out
+    return fout
  
  
 class Occupy:
@@ -45,7 +45,8 @@ def main():
     occupy = Occupy(1e15,par)
     print (occupy.central())
     print (occupy.satellite())
-    
+    fout = (load(filename))
+    print (fout.keys())
     
 if __name__ == "__main__":
     main()    
