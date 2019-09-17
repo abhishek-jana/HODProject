@@ -7,7 +7,7 @@ class Occupy:
     def __init__(self,HODpar,fin):
         self.fout = {}
         self.load(fin)
-        self.M = self.fout["mass"][:1000]
+        self.M = self.fout["mass"][700:1000]
         self.M_cut = HODpar["M_cut"]
         self.sigma = HODpar["sigma"]
         self.kappa = HODpar["kappa"]
@@ -56,13 +56,14 @@ class sphere:
     def __init__(self,number_of_particles):
         self.number_of_particles = number_of_particles
     def new_position(self):
-        radius = np.random.uniform(0.0,1.0, (self.number_of_particles,1))
-        theta = np.random.uniform(0.,1.,(self.number_of_particles,1))*np.pi
-        phi = np.arccos(1-2*np.random.uniform(0.0,1.,(self.number_of_particles,1)))
-        x = radius * np.sin( theta ) * np.cos( phi )
-        y = radius * np.sin( theta ) * np.sin( phi )
-        z = radius * np.cos( theta )
-        return (x,y,z)
+        radius = np.random.uniform(0.,1., (self.number_of_particles,1))
+        theta = np.arccos(1-2*np.random.uniform(0.,1.,(self.number_of_particles,1)))
+        phi = np.random.uniform(0.0,1.,(self.number_of_particles,1))*2*np.pi
+        x = radius**(1./3)*np.sin( theta ) * np.cos( phi )
+        y = radius**(1./3)*np.sin( theta ) * np.sin( phi )
+        z = radius**(1./3)*np.cos( theta)
+        outside = np.where(np.sqrt(x**2+y**2+z**2)<=1)[0]
+        return outside
          
 par = {"M_cut": 13., "sigma": 0.98, "kappa": 1.13 , "M1": 14., "alpha" : .9}
 import matplotlib.pyplot as plt
@@ -71,12 +72,12 @@ matplotlib.use('Agg')
 def main():
     np.random.seed(42)
     #occupy = Coordinates(par,filename)
-    #print (occupy.cen_coord())
+    #print (occupy.central())
     #print (occupy.satellite())
-    sp = sphere(1000)
-    plt.plot(sp.new_position()[0],sp.new_position()[2],'o')
-    plt.savefig('sphere.png')
-    print (sp.new_position()[0])
+    sp = sphere(10000)
+    #plt.plot(sp.new_position()[0],sp.new_position()[1],'.')
+    #plt.savefig('sphere.png')
+    print (sp.new_position().shape)
 
 
 if __name__ == "__main__":
