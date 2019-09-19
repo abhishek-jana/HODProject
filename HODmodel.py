@@ -53,7 +53,7 @@ class Coordinates(Occupy):
 
     def sphere_coordinates(self,number_of_particles,R):
         """
-        This will generate random uniform points inside a sphere of radius R
+        Given the number of particles this will generate random uniform points inside a sphere of radius R
         """
         u = np.random.uniform(0.,1., (number_of_particles,1))
         theta = np.arccos(1-2*np.random.uniform(0.,1.,(number_of_particles,1)))
