@@ -5,8 +5,7 @@ filename = "/mnt/data1/MDhalos.npy"
  
 class Occupy:
     def __init__(self,HODpar,fin):
-        self.fout = {}
-        self.load(fin)
+        self.fout = self.load(fin)
         self.M = self.fout["mass"]
         self.M_cut = HODpar["M_cut"]
         self.sigma = HODpar["sigma"]
@@ -21,15 +20,17 @@ class Occupy:
         Output:
         A dictionary containing "mass", "r1", "r2", "x", "y", "z"
         """
+        out = {}
         __file = np.load(fin)
-        self.fout["mass"] = __file[:,0]
-        self.fout["r1"] = __file[:,1]
-        self.fout["r2"] = __file[:,2]
-        self.fout["x"] = __file[:,3]
-        self.fout["y"] = __file[:,4]
-        self.fout["z"] = __file[:,5]
+        out["mass"] = __file[:,0]
+        out["r1"] = __file[:,1]
+        out["r2"] = __file[:,2]
+        out["x"] = __file[:,3]
+        out["y"] = __file[:,4]
+        out["z"] = __file[:,5]
         __file = [None]
-         
+        return out
+
     def central(self):
         """
         Returns 1 if there's a central galaxy. 
