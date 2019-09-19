@@ -105,7 +105,7 @@ par = {"M_cut": 13., "sigma": 0.98, "kappa": 1.13 , "M1": 14., "alpha" : .9}
 def main():
     np.random.seed(42)
     occupy = Coordinates(par,filename)
-    print (occupy.galaxy_coordinates().shape))
+    print (occupy.galaxy_coordinates().shape)
 
 if __name__ == "__main__":
     main()    
