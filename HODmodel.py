@@ -7,7 +7,7 @@ class Occupy:
     def __init__(self,HODpar,fin):
         self.fout = {}
         self.load(fin)
-        self.M = self.fout["mass"][700:1000]
+        self.M = self.fout["mass"]
         self.M_cut = HODpar["M_cut"]
         self.sigma = HODpar["sigma"]
         self.kappa = HODpar["kappa"]
@@ -38,32 +38,49 @@ class Occupy:
         return np.random.poisson(_Nsat)
 
 class Coordinates(Occupy):
-    def __init__(self,HODpar,fin):
+    def __init__(self,HODpar,fin): 
         super().__init__(HODpar,fin)
+
+    def sphere_coordinates(self,number_of_particles,R):
+        """
+        This will generate random uniform points inside a sphere of radius R
+        """
+        u = np.random.uniform(0.,1., (number_of_particles,1))
+        theta = np.arccos(1-2*np.random.uniform(0.,1.,(number_of_particles,1)))
+        phi = np.random.uniform(0.0,1.,(number_of_particles,1))*2*np.pi
+        x = np.cbrt(u)*R*np.sin( theta ) * np.cos( phi )
+        y = np.cbrt(u)*R*np.sin( theta ) * np.sin( phi )
+        z = np.cbrt(u)*R*np.cos( theta)
+        u,theta,phi = [None,None,None]
+        return np.c_[x,y,z]
 
     def cen_coord(self):
         _cen = Occupy.central(self)
         __nonzero = _cen.nonzero()
-        x = np.take(self.fout["x"], __nonzero)
-        y = np.take(self.fout["y"], __nonzero)
-        z = np.take(self.fout["z"], __nonzero)
-        _cen = np.vstack([x,y,z]).T
-        x,y,z = [None,None,None]
+        xcen = np.take(self.fout["x"], __nonzero)
+        ycen = np.take(self.fout["y"], __nonzero)
+        zcen = np.take(self.fout["z"], __nonzero)
+        _cen = np.vstack([xcen,ycen,zcen]).T
+        xcen,ycen,zceni,__nonzero = [None,None,None,None]
         return _cen
+    
     def sat_coord(self):
-        pass
-class sphere:
-    def __init__(self,number_of_particles):
-        self.number_of_particles = number_of_particles
-    def new_position(self):
-        radius = np.random.uniform(0.,1., (self.number_of_particles,1))
-        theta = np.arccos(1-2*np.random.uniform(0.,1.,(self.number_of_particles,1)))
-        phi = np.random.uniform(0.0,1.,(self.number_of_particles,1))*2*np.pi
-        x = radius**(1./3)*np.sin( theta ) * np.cos( phi )
-        y = radius**(1./3)*np.sin( theta ) * np.sin( phi )
-        z = radius**(1./3)*np.cos( theta)
-        outside = np.where(np.sqrt(x**2+y**2+z**2)<=1)[0]
-        return outside
+        _sat = Occupy.satellite(self)
+        __nonzero = _sat.nonzero()
+        radius = np.take(self.fout["r1"],__nonzero)
+        xsat = np.take(self.fout["x"],__nonzero)
+        ysat = np.take(self.fout["y"],__nonzero)
+        zsat = np.take(self.fout["z"],__nonzero)
+        _sat = np.take(_sat,__nonzero)
+        xyz_sat = np.vstack([xsat,ysat,zsat]).T
+        xyz_sat = np.repeat(xyz_sat,_sat[0],axis=0)
+        xsat,ysat,zsat = [None,None,None]
+        xyz = [Coordinates.sphere_coordinates(self,i,j) for i,j in zip(_sat[0],radius[0])]
+        radius,_sat,__nonzero = [None,None,None]
+        return np.vstack((xyz)) + xyz_sat
+    
+    def galaxy_coordinates(self):
+        return np.vstack((Coordinates.cen_coord(self),Coordinates.sat_coord(self)))
          
 par = {"M_cut": 13., "sigma": 0.98, "kappa": 1.13 , "M1": 14., "alpha" : .9}
 import matplotlib.pyplot as plt
@@ -71,14 +88,11 @@ import matplotlib
 matplotlib.use('Agg')
 def main():
     np.random.seed(42)
-    #occupy = Coordinates(par,filename)
-    #print (occupy.central())
-    #print (occupy.satellite())
-    sp = sphere(10000)
-    #plt.plot(sp.new_position()[0],sp.new_position()[1],'.')
-    #plt.savefig('sphere.png')
-    print (sp.new_position().shape)
-
-
+    occupy = Coordinates(par,filename)
+    #print (occupy.fout.keys())
+    #print (occupy.sphere_coordinates(5,occupy.fout["r1"][1]))
+    print (occupy.galaxy_coordinates().shape)
+    #xyz = [occupy.sphere_coordinates(i,j) for i,j in zip(occupy.satellite(),occupy.fout["r1"][1:5])]
+    #print (np.reshape(xyz,(-1,3)))
 if __name__ == "__main__":
     main()    
