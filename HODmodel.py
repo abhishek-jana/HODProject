@@ -16,10 +16,10 @@ class Occupy:
     
     def load(self,fin):
         """
-    file has 6 columns: Mass of Halo, Radius1 (scale radius), Radius 2 (virial radius), x, y, z
+        File has 6 columns: Mass of Halo, Radius1 (scale radius), Radius2 (virial radius), x, y, z
     
-    Output:
-    a dictionary containing mass,r1,r2,x,y,z
+        Output:
+        A dictionary containing "mass", "r1", "r2", "x", "y", "z"
         """
         __file = np.load(fin)
         self.fout["mass"] = __file[:,0]
@@ -30,10 +30,18 @@ class Occupy:
         self.fout["z"] = __file[:,5]
          
     def central(self):
+        """
+        Returns 1 if there's a central galaxy. 
+        Distribution found using eq.12 of https://iopscience.iop.org/article/10.1088/0004-637X/728/2/126/pdf
+        """
         _Ncen = 0.5*erfc(np.log(10**self.M_cut/self.M)/(np.sqrt(2)*self.sigma))
         return np.random.binomial(1,_Ncen)
         
     def satellite(self):
+        """
+        Returns Poisson distribution with mean _Nsat.
+        Distribution found using eq.13 of https://iopscience.iop.org/article/10.1088/0004-637X/728/2/126/pdf
+        """
         _Nsat = Occupy.central(self)*((self.M - self.kappa*(10**self.M_cut))/10**self.M1)**self.alpha
         return np.random.poisson(_Nsat)
 
@@ -55,6 +63,9 @@ class Coordinates(Occupy):
         return np.c_[x,y,z]
 
     def cen_coord(self):
+        """
+        Returns the coordinates of the central galaxies
+        """
         _cen = Occupy.central(self)
         __nonzero = _cen.nonzero()
         xcen = np.take(self.fout["x"], __nonzero)
@@ -65,6 +76,9 @@ class Coordinates(Occupy):
         return _cen
     
     def sat_coord(self):
+        """
+        Returns the coordinates of the satellite galaxies
+        """
         _sat = Occupy.satellite(self)
         __nonzero = _sat.nonzero()
         radius = np.take(self.fout["r1"],__nonzero)
@@ -80,19 +94,17 @@ class Coordinates(Occupy):
         return np.vstack((xyz)) + xyz_sat
     
     def galaxy_coordinates(self):
+        """
+        Returns the combined galaxy coordinates of satellite and central galaxies
+        """
         return np.vstack((Coordinates.cen_coord(self),Coordinates.sat_coord(self)))
          
 par = {"M_cut": 13., "sigma": 0.98, "kappa": 1.13 , "M1": 14., "alpha" : .9}
-import matplotlib.pyplot as plt
-import matplotlib
-matplotlib.use('Agg')
+
 def main():
     np.random.seed(42)
     occupy = Coordinates(par,filename)
-    #print (occupy.fout.keys())
-    #print (occupy.sphere_coordinates(5,occupy.fout["r1"][1]))
-    print (occupy.galaxy_coordinates().shape)
-    #xyz = [occupy.sphere_coordinates(i,j) for i,j in zip(occupy.satellite(),occupy.fout["r1"][1:5])]
-    #print (np.reshape(xyz,(-1,3)))
+    print (occupy.galaxy_coordinates().shape))
+
 if __name__ == "__main__":
     main()    
