@@ -28,6 +28,7 @@ class Occupy:
         self.fout["x"] = __file[:,3]
         self.fout["y"] = __file[:,4]
         self.fout["z"] = __file[:,5]
+        __file = [None]
          
     def central(self):
         """
