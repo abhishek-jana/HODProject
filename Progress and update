@@ -1,0 +1,9 @@
+Build an emulator which can generate galaxy catalogue from given five parameters. calculate various small scale parameters from that (vpf, cic etc.). Use quadretic model or similar (gaussian model) to calculate those small scale parameters fast.
+
+Finally use real data to get parameters by least square minimization.
+
+Things that are done so far:
+
+* code for emulator is almost done, need to add nfw profile for satellite galaxy.
+* quadretic model is done
+* parameters file is ready
