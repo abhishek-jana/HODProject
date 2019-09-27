@@ -6,7 +6,7 @@ filename = "/mnt/data1/MDhalos.npy"
 class Occupy:
     def __init__(self,HODpar,fin):
         self.fout = self.load(fin)
-        self.M = self.fout["mass"]
+        self.M = self.fout["mass"][:10]
         self.M_cut = HODpar["M_cut"]
         self.sigma = HODpar["sigma"]
         self.kappa = HODpar["kappa"]
@@ -113,7 +113,7 @@ class Coordinates(Occupy):
         xyz_sat = np.vstack([xsat,ysat,zsat]).T
         xyz_sat = np.repeat(xyz_sat,_sat[0],axis=0)
         xsat,ysat,zsat = [None,None,None]
-        xyz = [Coordinates.sphere_coordinates(self,i,j,k) for i,j,k in zip(_sat,virial_radius,scale_radius)]
+        xyz = [Coordinates.sphere_coordinates(self,i,j,k) for i,j,k in zip(_sat[0],virial_radius[0],scale_radius[0])]
         radius,_sat,__nonzero = [None,None,None]
         return np.vstack((xyz)) + xyz_sat
     
@@ -132,9 +132,9 @@ def main():
     #r = np.take(occupy.fout["r1"],sat.nonzero())
     #sat = np.take(sat,sat.nonzero())
     tic = time.time()
-    #print (occupy.sat_coord().shape)
-    print (occupy.sphere_coordinates(10,occupy.fout["r2"][0]/1000.,occupy.fout["r1"][0]/1000.))
-    print (occupy.fout["r1"][0]/1000.,occupy.fout["r2"][0]/1000.) 
+    print (occupy.sat_coord().shape)
+    #print (occupy.sphere_coordinates(10,occupy.fout["r2"][0]/1000.,occupy.fout["r1"][0]/1000.))
+    #print (occupy.fout["r1"][0]/1000.,occupy.fout["r2"][0]/1000.) 
     #print (np.save('output_file.npy',occupy.galaxy_coordinates()))
     #print (xyz_sat.shape)
     print (f'Total time = {time.time()-tic}')
