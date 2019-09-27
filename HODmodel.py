@@ -113,7 +113,7 @@ class Coordinates(Occupy):
         xyz_sat = np.vstack([xsat,ysat,zsat]).T
         xyz_sat = np.repeat(xyz_sat,_sat[0],axis=0)
         xsat,ysat,zsat = [None,None,None]
-        xyz = [Coordinates.sphere_coordinates(self,i,j,k) for i,j,k in zip(_sat,virial_radius,scale_radius)]
+        xyz = [Coordinates.sphere_coordinates(self,i,j,k) for i,j,k in zip(_sat[0],virial_radius[0],scale_radius[0])]
         radius,_sat,__nonzero = [None,None,None]
         return np.vstack((xyz)) + xyz_sat
     
