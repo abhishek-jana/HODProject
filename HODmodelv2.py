@@ -82,7 +82,7 @@ class Coordinates(Occupy):
         ycen = np.take(self.fout["y"], __nonzero)
         zcen = np.take(self.fout["z"], __nonzero)
         _cen = np.vstack([xcen,ycen,zcen]).T
-        xcen,ycen,zceni,__nonzero = [None,None,None,None]
+        xcen,ycen,zcen,__nonzero = [None,None,None,None]
         return _cen
     
     def sat_coord(self,n_jobs = 1):

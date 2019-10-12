@@ -1,5 +1,11 @@
+# This code is used to generate catalogs using uniform satellite distribution
+
 import numpy as np
 from scipy.special import erfc
+import gc
+import warnings
+warnings.filterwarnings("ignore")
+
 
 filename = "/mnt/data1/MDhalos.npy"
  
@@ -51,31 +57,11 @@ class Coordinates(Occupy):
     def __init__(self,HODpar,fin): 
         super().__init__(HODpar,fin)
 
-    def nfw_profile(self,u,r_s):
-        """
-        Input:
-        ------
-        u : floot, drawn from a uniform distribution
-        r_s : Scale radius.
-
-        Output:
-        ------
-        Returns a flooting point following nfw profile.
-        Details - https://en.wikipedia.org/wiki/Navarro-Frenk-White_profile
-        """
-        _coeff = [1./(r_s**3) , 2./(r_s**2) , 1./r_s , -1./u]
-        roots = np.roots(_coeff)
-        real = [i for i in roots if np.isreal(i)][0]
-        return real
-
-    def sphere_coordinates(self,number_of_particles,R,r_s):
+    def sphere_coordinates(self,number_of_particles,R):
         """
         Given the number of particles this will generate random uniform points inside a sphere of radius R
         """
-        #vec_profile = np.vectorize(Coordinates.nfw_profile)
         u = np.random.uniform(0.,1., (number_of_particles,1))
-        #u = vec_profile(self,u,r_s)
-        #u = np.real(u)
         theta = np.arccos(1-2*np.random.uniform(0.,1.,(number_of_particles,1)))
         phi = np.random.uniform(0.0,1.,(number_of_particles,1))*2*np.pi
         x = np.cbrt(u)*R*np.sin( theta ) * np.cos( phi )
@@ -105,15 +91,14 @@ class Coordinates(Occupy):
         _sat = Occupy.satellite(self)
         __nonzero = _sat.nonzero()
         virial_radius = np.take(self.fout["r2"], __nonzero)/1000.
-        scale_radius = np.take(self.fout["r1"],__nonzero)/1000.
         xsat = np.take(self.fout["x"],__nonzero)
         ysat = np.take(self.fout["y"],__nonzero)
         zsat = np.take(self.fout["z"],__nonzero)
         _sat = np.take(_sat,__nonzero)
         xyz_sat = np.vstack([xsat,ysat,zsat]).T
         xyz_sat = np.repeat(xyz_sat,_sat[0],axis=0)
-        xsat,ysat,zsat = [None,None,None]
-        xyz = [Coordinates.sphere_coordinates(self,i,j,k) for i,j,k in zip(_sat[0],virial_radius[0],scale_radius[0])]
+        xsat,ysat,zsat,__nonzero = [None,None,None,None]
+        xyz = [Coordinates.sphere_coordinates(self,i,j) for i,j in zip(_sat[0],virial_radius[0])]
         radius,_sat,__nonzero = [None,None,None]
         return np.vstack((xyz)) + xyz_sat
     
@@ -122,21 +107,53 @@ class Coordinates(Occupy):
         Returns the combined galaxy coordinates of satellite and central galaxies
         """
         return np.vstack((Coordinates.cen_coord(self),Coordinates.sat_coord(self)))
-         
-par = {"M_cut": 13., "sigma": 0.98, "kappa": 1.13 , "M1": 14., "alpha" : .9}
+
+def fiducial(num = 600, path = '/home/ajana/mockHOD/'):
+    """
+    num - Number of files to be generated
+    """
+    global HODpar
+    global key
+    global filename
+
+    for i in range(num):
+        par = {key[j]:HODpar[0][j] for j in range(len(key))}
+        print ('Loading file...')
+        occupy = Coordinates(par,filename)
+        print ('File loaded!')
+        tic = time.time()
+        print ('Calculating coordinates...')
+        coordinates = occupy.galaxy_coordinates()
+        np.save(os.path.join(path,f'MDgalaxies_{i:04d}.npy'),coordinates)
+        print ('Done!')
+        print (f'Total number of galaxies = {coordinates.shape[0]}')
+        print (f'Total time = {time.time()-tic}')
+    gc.collect()
+
+
+key = ["M_cut","M1" ,"sigma", "kappa", "alpha"]
+HODpar = np.loadtxt("parameters.txt")
+path = '/home/ajana/mockHOD'
 import time
+import os.path
 def main():
-    np.random.seed(42)
-    occupy = Coordinates(par,filename)
-    #sat = occupy.satellite()
-    #r = np.take(occupy.fout["r1"],sat.nonzero())
-    #sat = np.take(sat,sat.nonzero())
-    tic = time.time()
-    print (occupy.galaxy_coordinates().shape)
-    #print (occupy.sphere_coordinates(10,occupy.fout["r2"][0]/1000.,occupy.fout["r1"][0]/1000.))
-    #print (occupy.fout["r1"][0]/1000.,occupy.fout["r2"][0]/1000.) 
-    #print (np.save('output_file.npy',occupy.galaxy_coordinates()))
-    #print (xyz_sat.shape)
-    print (f'Total time = {time.time()-tic}')
+    
+    rows = HODpar.shape[0]
+    fiducial(num = 600)
+    '''    
+    for i in range(600):
+        par = {key[j]:HODpar[0][j] for j in range(len(key))}
+        print ('Loading file...')
+        occupy = Coordinates(par,filename)
+        print ('File loaded!')
+        tic = time.time()
+        print ('Calculating coordinates...')
+        coordinates = occupy.galaxy_coordinates()
+        np.save(os.path.join(path,f'MDgalaxies_{i:04d}.npy'),coordinates)
+        print ('Done!')
+        print (f'Total number of galaxies = {coordinates.shape[0]}')
+        print (f'Total time = {time.time()-tic}')
+    gc.collect()
+    '''
 if __name__ == "__main__":
     main()    
