@@ -99,8 +99,10 @@ class Coordinates(Occupy):
         xyz_sat = np.repeat(xyz_sat,_sat[0],axis=0)
         xsat,ysat,zsat,__nonzero = [None,None,None,None]
         xyz = [Coordinates.sphere_coordinates(self,i,j) for i,j in zip(_sat[0],virial_radius[0])]
-        radius,_sat,__nonzero = [None,None,None]
-        return np.vstack((xyz)) + xyz_sat
+        radius,__nonzero = [None,None]
+        _sat = np.vstack((xyz)) + xyz_sat
+        _sat = [_sat[i] for i in range(_sat.shape[0]) if len(np.where(_sat[i]<=2500.)[0])==3]
+        return np.vstack(_sat)
     
     def galaxy_coordinates(self):
         """
@@ -130,6 +132,25 @@ def fiducial(num = 600, path = '/home/ajana/mockHOD/'):
         print (f'Total time = {time.time()-tic}')
     gc.collect()
 
+def mock(path = "/home/ajana/mockHOD"):
+    global HODpar
+    global key
+    global filename
+
+    rows = HODpar.shape[0]
+    for i in range(1,rows):
+        par = {key[j]:HODpar[i][j] for j in range(len(key))}
+        print ('Loading file...')
+        occupy = Coordinates(par,filename)
+        print ('File loaded!')
+        tic = time.time()
+        print ('Calculating coordinates...')
+        coordinates = occupy.galaxy_coordinates()
+        np.save(os.path.join(path,f'galaxies_{i:04d}.npy'),coordinates)
+        print ('Done!')
+        print (f'Total number of galaxies = {coordinates.shape[0]}')
+        print (f'Total time = {time.time()-tic}')
+    gc.collect()
 
 key = ["M_cut","M1" ,"sigma", "kappa", "alpha"]
 HODpar = np.loadtxt("parameters.txt")
@@ -138,8 +159,9 @@ import time
 import os.path
 def main():
     
-    rows = HODpar.shape[0]
-    fiducial(num = 600)
+    #rows = HODpar.shape[0]
+    fiducial()
+    mock()
     '''    
     for i in range(600):
         par = {key[j]:HODpar[0][j] for j in range(len(key))}
