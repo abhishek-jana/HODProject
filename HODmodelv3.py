@@ -101,7 +101,7 @@ class Coordinates(Occupy):
         xyz = [Coordinates.sphere_coordinates(self,i,j) for i,j in zip(_sat[0],virial_radius[0])]
         radius,__nonzero = [None,None]
         _sat = np.vstack((xyz)) + xyz_sat
-        _sat = [_sat[i] for i in range(_sat.shape[0]) if len(np.where(_sat[i]<=2500.)[0])==3]
+        _sat = [_sat[i] for i in range(_sat.shape[0]) if len(np.where((_sat[i]>=0.) & (_sat[i]<=2500.))[0])==3]
         return np.vstack(_sat)
     
     def galaxy_coordinates(self):
