@@ -7,3 +7,6 @@ Things that are done so far:
 * code for emulator is almost done, need to add nfw profile for satellite galaxy.
 * quadretic model is done
 * parameters file is ready
+* VPF is Calculated
+* CIC is Calculated
+* make more MOCKs possibily ~20000

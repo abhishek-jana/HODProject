@@ -51,6 +51,8 @@ class Occupy:
         Distribution found using eq.13 of https://iopscience.iop.org/article/10.1088/0004-637X/728/2/126/pdf
         """
         _Nsat = Occupy.central(self)*((self.M - self.kappa*(10**self.M_cut))/10**self.M1)**self.alpha
+        _Nsat[np.where(np.isnan(_Nsat))] = 0
+        _Nsat[np.where(_Nsat < 1)] = 0
         return np.random.poisson(_Nsat)
 
 class Coordinates(Occupy):
@@ -126,7 +128,7 @@ def fiducial(num = 600, path = '/home/ajana/mockHOD/'):
         tic = time.time()
         print ('Calculating coordinates...')
         coordinates = occupy.galaxy_coordinates()
-        np.save(os.path.join(path,f'MDgalaxies_{i:04d}.npy'),coordinates)
+        #np.save(os.path.join(path,f'MDgalaxies_{i:04d}.npy'),coordinates.astype('float16'))
         print ('Done!')
         print (f'Total number of galaxies = {coordinates.shape[0]}')
         print (f'Total time = {time.time()-tic}')
@@ -146,7 +148,7 @@ def mock(path = "/home/ajana/mockHOD"):
         tic = time.time()
         print ('Calculating coordinates...')
         coordinates = occupy.galaxy_coordinates()
-        np.save(os.path.join(path,f'galaxies_{i:04d}.npy'),coordinates)
+        #np.save(os.path.join(path,f'galaxies_{i:04d}.npy'),coordinates.astype('float16'))
         print ('Done!')
         print (f'Total number of galaxies = {coordinates.shape[0]}')
         print (f'Total time = {time.time()-tic}')
@@ -160,10 +162,10 @@ import os.path
 def main():
     
     #rows = HODpar.shape[0]
-    fiducial()
+    #fiducial()
     mock()
-    '''    
-    for i in range(600):
+    '''   
+    for i in range(9400):
         par = {key[j]:HODpar[0][j] for j in range(len(key))}
         print ('Loading file...')
         occupy = Coordinates(par,filename)
@@ -171,7 +173,7 @@ def main():
         tic = time.time()
         print ('Calculating coordinates...')
         coordinates = occupy.galaxy_coordinates()
-        np.save(os.path.join(path,f'MDgalaxies_{i:04d}.npy'),coordinates)
+        #np.save(os.path.join(path,f'MDgalaxies_{i+600:04d}.npy'),coordinates.astype('float16'))
         print ('Done!')
         print (f'Total number of galaxies = {coordinates.shape[0]}')
         print (f'Total time = {time.time()-tic}')
