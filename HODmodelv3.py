@@ -128,7 +128,7 @@ def fiducial(num = 600, path = '/home/ajana/mockHOD/'):
         tic = time.time()
         print ('Calculating coordinates...')
         coordinates = occupy.galaxy_coordinates()
-        #np.save(os.path.join(path,f'MDgalaxies_{i:04d}.npy'),coordinates.astype('float16'))
+        np.save(os.path.join(path,f'MDgalaxies_{i:04d}.npy'),coordinates.astype('float16'))
         print ('Done!')
         print (f'Total number of galaxies = {coordinates.shape[0]}')
         print (f'Total time = {time.time()-tic}')
@@ -148,7 +148,7 @@ def mock(path = "/home/ajana/mockHOD"):
         tic = time.time()
         print ('Calculating coordinates...')
         coordinates = occupy.galaxy_coordinates()
-        #np.save(os.path.join(path,f'galaxies_{i:04d}.npy'),coordinates.astype('float16'))
+        np.save(os.path.join(path,f'galaxies_{i:04d}.npy'),coordinates.astype('float16'))
         print ('Done!')
         print (f'Total number of galaxies = {coordinates.shape[0]}')
         print (f'Total time = {time.time()-tic}')
@@ -162,7 +162,7 @@ import os.path
 def main():
     
     #rows = HODpar.shape[0]
-    #fiducial()
+    fiducial(10000)
     mock()
     '''   
     for i in range(9400):
