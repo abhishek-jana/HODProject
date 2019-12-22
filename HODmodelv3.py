@@ -162,7 +162,7 @@ import os.path
 def main():
     
     #rows = HODpar.shape[0]
-    fiducial(10000)
+    #fiducial(10000)
     mock()
     '''   
     for i in range(9400):

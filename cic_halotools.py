@@ -22,10 +22,10 @@ def CountsInCylinders(proj_search_radius, cylinder_half_length, period, filename
         if (sample.dtype != 'float64'):
             sample = sample.astype('float64')
             cic = counts_in_cylinders(sample,sample,proj_search_radius=proj_search_radius,cylinder_half_length=cylinder_half_length,period=period)
-            np.save(os.path.join('/home/ajana/CIC/','test_'+str(filename)),cic.astype('int8'))
+            np.save(os.path.join('/home/ajana/CIC/','cic_'+str(filename)),cic.astype('int8'))
         else:
             cic = counts_in_cylinders(sample,sample,proj_search_radius=proj_search_radius,cylinder_half_length=cylinder_half_length,period=period)
-            np.save(os.path.join('/home/ajana/CIC/','test_'+str(filename)),cic.astype('int8'))
+            np.save(os.path.join('/home/ajana/CIC/','cic_'+str(filename)),cic.astype('int8'))
 
     else:
         raise TypeError("File should be in .npy format")
@@ -41,8 +41,8 @@ def parallel_cic(proj_search_radius,cylinder_half_length,period,path):
 
 def main():
     start = time.time()
-    parallel_cic( proj_search_radius = proj_search_radius,cylinder_half_length = cylinder_half_length, period = L, path = path)
-    #CountsInCylinders( proj_search_radius = proj_search_radius,cylinder_half_length = cylinder_half_length, period = L, filename = 'MDgalaxies_0100.npy')
+    #parallel_cic( proj_search_radius = proj_search_radius,cylinder_half_length = cylinder_half_length, period = L, path = path)
+    CountsInCylinders( proj_search_radius = proj_search_radius,cylinder_half_length = cylinder_half_length, period = L, filename = 'galaxies_0100.npy')
     print (f'Total time taken: {time.time() - start}')
 if __name__ == "__main__":
     main() 
