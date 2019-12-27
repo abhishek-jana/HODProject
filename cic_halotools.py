@@ -41,8 +41,8 @@ def parallel_cic(proj_search_radius,cylinder_half_length,period,path):
 
 def main():
     start = time.time()
-    #parallel_cic( proj_search_radius = proj_search_radius,cylinder_half_length = cylinder_half_length, period = L, path = path)
-    CountsInCylinders( proj_search_radius = proj_search_radius,cylinder_half_length = cylinder_half_length, period = L, filename = 'galaxies_0100.npy')
+    parallel_cic( proj_search_radius = proj_search_radius,cylinder_half_length = cylinder_half_length, period = L, path = path)
+    #CountsInCylinders( proj_search_radius = proj_search_radius,cylinder_half_length = cylinder_half_length, period = L, filename = 'galaxies_0100.npy')
     print (f'Total time taken: {time.time() - start}')
 if __name__ == "__main__":
     main() 
