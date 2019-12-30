@@ -4,6 +4,7 @@ import numpy as np
 from scipy.special import erfc
 import gc
 import warnings
+from numba import jit
 warnings.filterwarnings("ignore")
 
 
@@ -140,7 +141,7 @@ def mock(path = "/home/ajana/mockHOD"):
     global filename
 
     rows = HODpar.shape[0]
-    for i in range(1,rows):
+    for i in range(5000,rows):
         par = {key[j]:HODpar[i][j] for j in range(len(key))}
         print ('Loading file...')
         occupy = Coordinates(par,filename)
