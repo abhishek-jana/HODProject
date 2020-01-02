@@ -27,19 +27,21 @@ def CountsInAnnuli(inner_radius,outer_radius, cylinder_half_length, period, file
             np.save(os.path.join('/mnt/data4/Abhishek/CIA/random','cia_'+str(filename)),(outer-inner).astype('int8'))
             del outer
             del inner
+            del sample
         else:
             outer = counts_in_cylinders(sample,sample,proj_search_radius=outer_radius,cylinder_half_length=cylinder_half_length,period=period)
             inner = counts_in_cylinders(sample,sample,proj_search_radius=inner_radius,cylinder_half_length=cylinder_half_length,period=period)
             np.save(os.path.join('/mnt/data4/Abhishek/CIA/random','cia_'+str(filename)),(outer-inner).astype('int8'))
             del outer
             del inner
+            del sample
     else:
         raise TypeError("File should be in .npy format")
     #return None
 
 def parallel_cia(inner_radius,outer_radius,cylinder_half_length,period,path):
-    pool = mp.Pool()
-    filenames = ['galaxies_'+str(files)+'.npy' for files in range(10000)]
+    pool = mp.Pool(20)
+    filenames = ['galaxies_'+f'{files:04d}'+'.npy' for files in range(1000)]
     #filenames = [files for files in os.listdir(path) if files.endswith('.npy')]
     results = [pool.apply_async(CountsInAnnuli, args=(inner_radius,outer_radius,cylinder_half_length,period,i,)) for i in filenames]
     pool.close()
