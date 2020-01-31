@@ -1,5 +1,5 @@
 # This code is used to generate catalogs using uniform satellite distribution
-
+# incorrect Sphere_coordinates function
 import numpy as np
 from scipy.special import erfc
 import gc
@@ -43,7 +43,7 @@ class Occupy:
         Returns 1 if there's a central galaxy. 
         Distribution found using eq.12 of https://iopscience.iop.org/article/10.1088/0004-637X/728/2/126/pdf
         """
-        _Ncen = 0.5*erfc(np.log(10**self.M_cut/self.M)/(np.sqrt(2)*self.sigma))
+        _Ncen = 0.5*erfc(np.log10(10**self.M_cut/self.M)/(np.sqrt(2)*self.sigma))
         return np.random.binomial(1,_Ncen)
 
     def satellite(self):
@@ -92,8 +92,12 @@ class Coordinates(Occupy):
         Change the radius to Mpc
         """
         _sat = Occupy.satellite(self)
-        __nonzero = _sat.nonzero()
-        virial_radius = np.take(self.fout["r2"], __nonzero)/1000.
+        _cen = Occupy.central(self)
+        __nonzero = _cen.nonzero()
+        _sat = np.take(_sat,__nonzero)
+        __nonzero = _sat[0].nonzero()
+        _cen = [None]
+        virial_radius = np.take(self.fout["r1"], __nonzero)/1000.
         xsat = np.take(self.fout["x"],__nonzero)
         ysat = np.take(self.fout["y"],__nonzero)
         zsat = np.take(self.fout["z"],__nonzero)
@@ -141,7 +145,7 @@ def mock(path = "/home/ajana/mockHOD"):
     global filename
 
     rows = HODpar.shape[0]
-    for i in range(5000,rows):
+    for i in range(1):
         par = {key[j]:HODpar[i][j] for j in range(len(key))}
         print ('Loading file...')
         occupy = Coordinates(par,filename)
