@@ -9,7 +9,7 @@ from numba import jit
 warnings.filterwarnings("ignore")
 
 np.random.seed(42)
-filename = "/mnt/data1/MDhalos.npy"
+filename = "test.npy"
  
 class Occupy:
     def __init__(self,HODpar,fin):
