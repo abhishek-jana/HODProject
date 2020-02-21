@@ -9,7 +9,7 @@ from numba import jit
 warnings.filterwarnings("ignore")
 
 np.random.seed(42)
-filename = "test.npy"
+filename = "/mnt/data1/MDhalos.npy"
  
 class Occupy:
     def __init__(self,HODpar,fin):
@@ -43,7 +43,9 @@ class Occupy:
         Distribution found using eq.12 of https://iopscience.iop.org/article/10.1088/0004-637X/728/2/126/pdf
         """
         _Ncen = 0.5*erfc(np.log10(10**self.M_cut/self.M)/(np.sqrt(2)*self.sigma))
-        return np.random.binomial(1,_Ncen)
+        res = np.random.binomial(1,_Ncen)
+        #print (res)
+        return res
 
     def satellite(self):
         """
@@ -67,7 +69,7 @@ class Coordinates(Occupy):
         __nonzero = _cen.nonzero()[0]
         _cen = self.fout["xyz"][__nonzero]
         __nonzero = None
-        print (_cen)
+        #print (_cen)
         return _cen
 
 
@@ -90,6 +92,7 @@ def mock(path = "/home/ajana/mockHOD"):
         print ('Done!')
         print (f'Total number of galaxies = {coordinates.shape[0]}')
         print (f'Total time = {time.time()-tic}')
+        print (f'File saved as galaxies_{i:04d}.npy')
     gc.collect()
 
 key = ["M_cut","M1" ,"sigma", "kappa", "alpha"]
