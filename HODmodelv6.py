@@ -135,13 +135,13 @@ def mock(path = "/home/ajana/mockHOD/satellite"):
     global filename
 
     rows = HODpar.shape[0]
-    for i in range(5000):
+    for i in range(3782):
         par = {key[j]:HODpar[i][j] for j in range(len(key))}
         occupy = Coordinates(par)
         tic = time.time()
         print ('Calculating coordinates...')
         coordinates = occupy.galaxy_coordinates()
-        np.save(os.path.join(path,f'galaxies_{i:04d}.npy'),coordinates)
+        np.save(os.path.join(path,f'galaxies_{i:04d}.npy'),coordinates.astype('float32'))
         print ('Done!')
         print (f'Total number of galaxies = {coordinates.shape[0]}')
         print (f'Total time = {time.time()-tic}')

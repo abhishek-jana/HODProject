@@ -41,8 +41,8 @@ def CountsInAnnuli(inner_radius,outer_radius, cylinder_half_length, period, file
 
 def parallel_cia(inner_radius,outer_radius,cylinder_half_length,period,path):
     pool = mp.Pool(20)
-    filenames = ['galaxies_'+f'{files:04d}'+'.npy' for files in range(1000)]
-    #filenames = [files for files in os.listdir(path) if files.endswith('.npy')]
+    #filenames = ['galaxies_'+f'{files:04d}'+'.npy' for files in range(1000)]
+    filenames = [files for files in os.listdir(path) if files.endswith('.npy')]
     results = [pool.apply_async(CountsInAnnuli, args=(inner_radius,outer_radius,cylinder_half_length,period,i,)) for i in filenames]
     pool.close()
     pool.join()
