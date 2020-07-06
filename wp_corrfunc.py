@@ -10,7 +10,8 @@ from Corrfunc.theory.wp import wp
 
 #NEED to convert sample to 'float64' for cic to work
 
-path = '/mnt/data4/Abhishek/mockHOD/'
+#path = '/mnt/data4/Abhishek/mockHOD/'
+path = '/mnt/data4/Abhishek/fidmock'
 
 bins = np.logspace(-1,1.5,30)
 L = 2500.
@@ -24,14 +25,16 @@ def ProjectedCorrFunc(boxsize, pimax, nthreads, binfile,filename):
             sample = sample.astype('float64')
             wp_counts = wp(boxsize, pimax, nthreads, binfile, X = sample[:,0], Y = sample[:,1], Z = sample[:,2])
             corr = [i[3] for i in wp_counts]
-            np.save(os.path.join('/mnt/data4/Abhishek/WP','wp_'+str(filename)),[corr,bins[:-1]])
+            #np.save(os.path.join('/mnt/data4/Abhishek/WP','wp_'+str(filename)),[corr,bins[:-1]])
+            np.save(os.path.join('/mnt/data4/Abhishek/fidmock/wp','wp_'+str(filename)),[corr,bins[:-1]])
             del wp_counts
             del corr
             del sample
         else:
             wp_counts = wp(boxsize, pimax, nthreads, binfile, X = sample[:,0], Y = sample[:,1], Z = sample[:,2])
             corr = [i[3] for i in wp_counts]
-            np.save(os.path.join('/mnt/data4/Abhishek/WP','wp_'+str(filename)),[corr,bins[:-1]])
+            #np.save(os.path.join('/mnt/data4/Abhishek/WP','wp_'+str(filename)),[corr,bins[:-1]])
+            np.save(os.path.join('/mnt/data4/Abhishek/wp','wp_'+str(filename)),[corr,bins[:-1]])
             del wp_counts
             del corr
             del sample
