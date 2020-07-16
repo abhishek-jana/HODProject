@@ -9,7 +9,8 @@ import multiprocessing as mp
 
 #NEED to convert sample to 'float64' for cic to work
 
-path = '/mnt/data4/Abhishek/mockHOD/'
+#path = '/mnt/data4/Abhishek/mockHOD/'
+path = '/mnt/data4/Abhishek/fidmock'
 
 inner_radius = 2.0
 outer_radius = 5.0
@@ -24,14 +25,16 @@ def CountsInAnnuli(inner_radius,outer_radius, cylinder_half_length, period, file
             sample = sample.astype('float64')
             outer = counts_in_cylinders(sample,sample,proj_search_radius=outer_radius,cylinder_half_length=cylinder_half_length,period=period)
             inner = counts_in_cylinders(sample,sample,proj_search_radius=inner_radius,cylinder_half_length=cylinder_half_length,period=period)
-            np.save(os.path.join('/mnt/data4/Abhishek/CIA/random','cia_'+str(filename)),(outer-inner).astype('int8'))
+            #np.save(os.path.join('/mnt/data4/Abhishek/CIA/random','cia_'+str(filename)),(outer-inner).astype('int8'))
+            np.save(os.path.join('/mnt/data4/Abhishek/fidmock/cia','cia_'+str(filename)),((outer-inner).astype('int8')))
             del outer
             del inner
             del sample
         else:
             outer = counts_in_cylinders(sample,sample,proj_search_radius=outer_radius,cylinder_half_length=cylinder_half_length,period=period)
             inner = counts_in_cylinders(sample,sample,proj_search_radius=inner_radius,cylinder_half_length=cylinder_half_length,period=period)
-            np.save(os.path.join('/mnt/data4/Abhishek/CIA/random','cia_'+str(filename)),(outer-inner).astype('int8'))
+            #np.save(os.path.join('/mnt/data4/Abhishek/CIA/random','cia_'+str(filename)),(outer-inner).astype('int8'))
+            np.save(os.path.join('/mnt/data4/Abhishek/fidmock/cia','cia_'+str(filename)),((outer-inner).astype('int8')))
             del outer
             del inner
             del sample
@@ -41,8 +44,8 @@ def CountsInAnnuli(inner_radius,outer_radius, cylinder_half_length, period, file
 
 def parallel_cia(inner_radius,outer_radius,cylinder_half_length,period,path):
     pool = mp.Pool(20)
-    #filenames = ['galaxies_'+f'{files:04d}'+'.npy' for files in range(1000)]
-    filenames = [files for files in os.listdir(path) if files.endswith('.npy')]
+    filenames = ['subsample_'+f'{files:04d}'+'.npy' for files in range(100,300)]
+    #filenames = [files for files in os.listdir(path) if files.endswith('.npy')]
     results = [pool.apply_async(CountsInAnnuli, args=(inner_radius,outer_radius,cylinder_half_length,period,i,)) for i in filenames]
     pool.close()
     pool.join()

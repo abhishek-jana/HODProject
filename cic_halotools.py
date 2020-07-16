@@ -9,7 +9,8 @@ import multiprocessing as mp
 
 #NEED to convert sample to 'float64' for cic to work
 
-path = '/mnt/data4/Abhishek/mockHOD/'
+#path = '/mnt/data4/Abhishek/mockHOD/'
+path = '/mnt/data4/Abhishek/fidmock'
 
 proj_search_radius = 2.0
 cylinder_half_length = 10.0
@@ -22,10 +23,12 @@ def CountsInCylinders(proj_search_radius, cylinder_half_length, period, filename
         if (sample.dtype != 'float64'):
             sample = sample.astype('float64')
             cic = counts_in_cylinders(sample,sample,proj_search_radius=proj_search_radius,cylinder_half_length=cylinder_half_length,period=period)
-            np.save(os.path.join('/mnt/data4/Abhishek/CIC/','cic_'+str(filename)),cic.astype('int8'))
+            #np.save(os.path.join('/mnt/data4/Abhishek/CIC/','cic_'+str(filename)),cic.astype('int8'))
+            np.save(os.path.join('/mnt/data4/Abhishek/fidmock/cic','cic_'+str(filename)),(cic.astype('int8')))
         else:
             cic = counts_in_cylinders(sample,sample,proj_search_radius=proj_search_radius,cylinder_half_length=cylinder_half_length,period=period)
-            np.save(os.path.join('/mnt/data4/Abhishek/CIC/','cic_'+str(filename)),cic.astype('int8'))
+            #np.save(os.path.join('/mnt/data4/Abhishek/CIC/','cic_'+str(filename)),cic.astype('int8'))
+            np.save(os.path.join('/mnt/data4/Abhishek/fidmock/cic','cic_'+str(filename)),(cic.astype('int8')))
 
     else:
         raise TypeError("File should be in .npy format")
@@ -33,7 +36,7 @@ def CountsInCylinders(proj_search_radius, cylinder_half_length, period, filename
 
 def parallel_cic(proj_search_radius,cylinder_half_length,period,path):
     pool = mp.Pool(20)
-    filenames = ['galaxies_'+f'{files:04d}'+'.npy' for files in range(1000)]
+    filenames = ['subsample_'+f'{files:04d}'+'.npy' for files in range(100,300)]
     #filenames = [files for files in os.listdir(path) if files.endswith('.npy')]  # this is correct
     results = [pool.apply_async(CountsInCylinders, args=( proj_search_radius,cylinder_half_length,period,i,)) for i in filenames]
     pool.close()

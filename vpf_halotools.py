@@ -13,22 +13,25 @@ L = 2500.
 
 radius = np.logspace(-1,1.3,30)  # 0.1 - 19.98 MPc
 
-path = '/mnt/data4/Abhishek/mockHOD/'
+#path = '/mnt/data4/Abhishek/mockHOD/'
+path = '/mnt/data4/Abhishek/fidmock'
+
 
 def voidprobfunc(rbins, n_ran, period, filename):
     global path
     if filename.endswith(".npy"):
         sample = np.load(os.path.join(path,filename))
         vpf = void_prob_func(sample,rbins=rbins,n_ran=n_ran,period=period)
-        np.save(os.path.join('/mnt/data4/Abhishek/VPF/random','vpf_'+str(filename)),(rbins.astype('float64'),vpf.astype('float64')))
+        np.save(os.path.join('/mnt/data4/Abhishek/fidmock/vpf','vpf_'+str(filename)),(rbins,vpf))
+        #np.save(os.path.join('/mnt/data4/Abhishek/VPF/random','vpf_'+str(filename)),(rbins.astype('float64'),vpf.astype('float64')))
     else:
         raise TypeError("File should be in .npy format")
     #return None
 
 def parallel_vpf(rbins,n_ran,period,path):
     pool = mp.Pool()
-    #filenames = [files for files in os.listdir(path) if files.endswith('.npy')]
-    filenames = ['galaxies_'+f'{files:04d}'+'.npy' for files in range(10000)]
+    filenames = [files for files in os.listdir(path) if files.endswith('.npy')]
+    #filenames = ['galaxies_'+f'{files:04d}'+'.npy' for files in range(10000)]
     results = [pool.apply_async(voidprobfunc, args=(rbins,n_ran,period,i,)) for i in filenames]
     pool.close()
     pool.join()

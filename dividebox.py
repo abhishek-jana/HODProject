@@ -17,9 +17,10 @@ binsize = list(itertools.product(b, b)) # x and y coordinates
 
 
 for j,bins in enumerate(binsize):
-    arr = [i for i in range(mockfile.shape[0]) if ((mockfile[i,:-2]>=bins[0][0]) & (mockfile[i,:-2]<=bins[0][1]) & (mockfile[i,1:-1]>=bins[1][0]) & (mockfile[i,1:-1]<=bins[1][1]))]
-    np.save(os.path.join(path+'fidmock',f'subsample_{j:04d}.npy'),np.delete(mockfile,arr,0))
+    arr = [i for i in range(mockfile.shape[0]) if ((mockfile[i,:-2]>=bins[0][0]) & (mockfile[i,:-2]<=bins[0][1]) & (mockfile[i,2:]>=bins[1][0]) & (mockfile[i,2:]<=bins[1][1]))]
+    np.save(os.path.join(path+'fidmock',f'subsample_{j+200:04d}.npy'),np.delete(mockfile,arr,0))
 
 
-
+#arr = [i for i in range(mockfile.shape[0]) if ((mockfile[i,:-2]>=2250) & (mockfile[i,:-2]<=2500) & (mockfile[i,1:-1]>=2250) & (mockfile[i,1:-1]<=2500))]
+#np.save(os.path.join(path+'fidmock',f'subsample_0199.npy'),np.delete(mockfile,arr,0))
 
