@@ -72,12 +72,12 @@ print (soln.x)
 '''
 import emcee
 ndim = 5
-nwalkers = 50
+nwalkers = 64
 #init = np.array([13.13832939, 14.04617357,  1.04476888,  1.28230299,  0.87658467])
 init = np.array([13.09006542, 14.05997246,  0.98009625,  1.1310932,   0.90094299])
 pos = init + 1e-4 * np.random.rand(nwalkers, ndim)
 
-
+'''
 
 
 with Pool() as pool:
@@ -89,7 +89,16 @@ with Pool() as pool:
     #pos, _, _ = sampler.run_mcmc(pos, 200, progress = True, store = False)
     #sampler.reset()
     print("Running production...")
-    sampler.run_mcmc(pos, 5000,store=True, progress=True)
+    sampler.run_mcmc(pos, 50000,store=True, progress=True)
+'''    
+with Pool() as pool:
+    filename = "wpmcmctest.h5"
+    backend = emcee.backends.HDFBackend(filename)
+    print("Initial size: {0}".format(backend.iteration))
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, log_probability, args=(wp_data, wp_cov),pool=pool,backend=backend)
+    print("Running production...")
+    sampler.run_mcmc(None, 1000000,store=True, progress=True)
+    print("Final size: {0}".format(backend.iteration))
     
 print("Mean acceptance fraction: {0:.3f}".format(np.mean(sampler.acceptance_fraction)))
 
